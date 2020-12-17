@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>charts</title>
+<style>
+@keyframes slideInFromBelow {
+    0% { transform: translateY(100%); }
+    100% { transform: translateY(0);}
+}
+.chart_bar {
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+    animation-delay: 1s;
+    animation-iteration-count: 1;
+    animation-name: slideInFromBelow;
+    background: #666;
+    float:left;
+    position: relative;
+    text-align: center;
+}
+.chart_text {
+    position:relative; 
+    top:-40px;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+#charcanvas {
+    overflow:hidden; 
+    height:400px; 
+    display:block;
+    border:  solid #666;
+    border-width: 0px 0px 3px 3px;
+}
+</style>
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div id="charcanvas"></div>
+            </div>
+        </div>
+    </div>
+<script>
+    function createChart(parentName, values, margin) {
+        function createBar(style, label, value, parent) {
+            const bar = document.createElement('div');
+            bar.className += " chart_bar";
+            bar.innerHTML = '<span class="chart_text">' + label + "<br>" + value + '</span>';
+            bar.title = value;
+            bar.style = style;
+            parent.appendChild(bar);
+        }
+        const charcanvas = document.getElementById(parentName);
+        const width = charcanvas.clientWidth;
+        const marginPercentage = margin || 1; // percentage
+        const barWidth = (width / values.length) - (width * (marginPercentage / 100))
+        charcanvas.innerHTML = "";
+        values.forEach(bar => {
+            const barHeight = bar.value * 4;
+            // I use (barWidth - 1) to counter some rounding errors
+            // otherwise it is sometimes possible for the last bar to 
+            // drop off the chart.
+            let style = "width: " + (barWidth - 1) + "px;" + 
+                "height: " + barHeight + "px;" + 
+                "background-color: " + bar.color + ";" + 
+                "top:" + (charcanvas.clientHeight - barHeight) + "px;" + 
+                "margin-left: " + (marginPercentage / 2) + "%;" + 
+                "margin-right: " + (marginPercentage / 2 )+ "%;";
+            createBar(style, bar.label, bar.value, charcanvas);
+        });
+    }
+
+    fetch('/', {'headers': {'Content-Type': 'application/json'}}
+    ).then(resp => {
+        return resp.json();
+    }).then(values => {
+        createChart('charcanvas', values);
+        window.addEventListener("resize", () => { createChart('charcanvas', values)});
+    });
+</script>
+</body>
+</html>
