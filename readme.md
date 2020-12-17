@@ -1,7 +1,7 @@
 
 # Simple bar chart
 
-A simple HTML demo on how to create a barchart without the need for a 
+A simple HTML demo on how to create a bar chart without the need for a 
 third party library.
 
 ## Set up
